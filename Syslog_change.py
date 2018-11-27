@@ -21,9 +21,7 @@ with open(filnavn) as fh:
         index= 0
         while (index < len(Inventory_list)):
             url = "https://" + Inventory_list[index]["IP address"] + ":443/restconf/data/Cisco-IOS-XE-native:native/logging/host/"
-            print ("URL: " + url)
             payload = '{"host": {"ipv4-host-list": [{"ipv4-host": "' + syslog_addresse + '"}]}}'
-            print ("PAYLOAD: " + payload)
             headers = {'Content-Type': "application/yang-data+json"}
             r = requests.put(url,auth=(Inventory_list[index]["Username"], Inventory_list[index]["Password"]), headers=headers, data=payload, verify=False)
             if "204" in str(r):
@@ -36,17 +34,15 @@ with open(filnavn) as fh:
         index= 0
         while (index < len(Inventory_list)):
             url = "https://" + Inventory_list[index]["IP address"] + ":443/restconf/data/Cisco-IOS-XE-native:native/logging/host"
-            print ("URL: " + url)
             payload = {"host": {"ipv4-host-list": []}}
             headers = {'Content-Type': "application/yang-data+json"}
             r = requests.get(url, auth=(Inventory_list[index]["Username"], Inventory_list[index]["Password"]),headers=headers, verify=False)
             data = r.text
-            print ("Response GET: " + data )
             syslog_list = xmltodict.parse(data)
-            print("TYPE: " + str(type(syslog_list["host"]["ipv4-host-list"])))
-            print ("SYSLOG_LIST: " + str(syslog_list))
-            print ("O: " + str(syslog_list["host"]["ipv4-host-list"]))
-            print ("Length: " + str(len(syslog_list["host"]["ipv4-host-list"])))
+            #print("TYPE: " + str(type(syslog_list["host"]["ipv4-host-list"])))
+            #print ("SYSLOG_LIST: " + str(syslog_list))
+            #print ("O: " + str(syslog_list["host"]["ipv4-host-list"]))
+            #print ("Length: " + str(len(syslog_list["host"]["ipv4-host-list"])))
             if len(syslog_list["host"]["ipv4-host-list"]) == 1:
                 payload["host"]["ipv4-host-list"].append({"ipv4-host": syslog_list["host"]["ipv4-host-list"]["ipv4-host"]})
                 print ("INSIDE IF LEN == 1")
