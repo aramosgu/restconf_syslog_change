@@ -25,7 +25,7 @@ with open(filnavn) as fh:
             headers = {'Content-Type': "application/yang-data+json"}
             r = requests.put(url,auth=(Inventory_list[index]["Username"], Inventory_list[index]["Password"]), headers=headers, data=payload, verify=False)
             if "204" in str(r):
-                print ("Configuration succesful")
+                print ("Success!")
             else:
                 print ("Something went wrong with the configuration: " + r.text + str(r))
 
@@ -39,30 +39,20 @@ with open(filnavn) as fh:
             r = requests.get(url, auth=(Inventory_list[index]["Username"], Inventory_list[index]["Password"]),headers=headers, verify=False)
             data = r.text
             syslog_list = xmltodict.parse(data)
-            #print("TYPE: " + str(type(syslog_list["host"]["ipv4-host-list"])))
-            #print ("SYSLOG_LIST: " + str(syslog_list))
-            #print ("O: " + str(syslog_list["host"]["ipv4-host-list"]))
-            #print ("Length: " + str(len(syslog_list["host"]["ipv4-host-list"])))
+
             if len(syslog_list["host"]["ipv4-host-list"]) == 1:
                 payload["host"]["ipv4-host-list"].append({"ipv4-host": syslog_list["host"]["ipv4-host-list"]["ipv4-host"]})
-                print ("INSIDE IF LEN == 1")
             elif len(syslog_list["host"]["ipv4-host-list"]) > 1:
                 for syslog in syslog_list["host"]["ipv4-host-list"]:
-                    #syslog = syslog_list["host"]["ipv4-host-list"]
-                    print ("Loop_1: " + str(syslog_list["host"]["ipv4-host-list"]))
-                    print ("In loop: " + str(syslog) + ", TYPE: " + str(type(syslog)))
                     payload["host"]["ipv4-host-list"].append({"ipv4-host": syslog["ipv4-host"]})
             payload["host"]["ipv4-host-list"].append({"ipv4-host": syslog_addresse})
 
-            print ("PAYLOAD: " + str (payload))
             payload = json.dumps(payload)
-            print ("PAYLOAD AS STRING: " + payload)
             r = requests.put(url,auth=('cisco', 'cisco123'), headers=headers, data=payload, verify=False)
             if "204" in str(r):
-                print ("Configuration succesful")
+                print ("Success!")
             else:
                 print ("Something went wrong with the configuration: " + r.text)
-            print ("INDEX: " + str(index))
             index+=1
 
     else:
